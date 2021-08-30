@@ -5,14 +5,33 @@ main {
 }
 
 .gameForm {
-    margin-top: 10%;
+    margin-top: 5%;
     text-align: center;
     background-color: lightgrey;
     width: 40%;
     
 }
+
+.timer {
+    margin-left: 80%;
+    background-color: lightblue;
+}
  #quizStart {
      height:50px;
      width:100px;
      background-color: lightblue;
+     
  }
+
+ #answerButtons {
+     margin-bottom: 3px;
+     height: 10px;
+     width: 300px;
+     background-color: lightskyblue;
+     padding:5px;
+     border:2px black solid;
+ }
+#answerButtons:hover {
+    background-color: lightyellow;
+    cursor: pointer;
+}
