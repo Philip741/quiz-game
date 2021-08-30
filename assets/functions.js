@@ -1,8 +1,7 @@
-var missedQuestion = false;
-var questions = {
-    q0:"What two values can a boolean be set as ?",
-    q1:"What does DOM stand for ?"
-}
+var score = 0;
+var currentQuestion = 1;
+var timerElement = document.querySelector("#timer-count");
+var gameWon = 1;
 
 function clearContent(elementID) {
     // clears all elements within elementID argument
@@ -15,60 +14,130 @@ function clearContent(elementID) {
     }
 }
 
-function setQuestion (elementName,questionAnswers,number) {
+async function getQuestions() {
+    let response = await fetch("assets/data.json");
+    const data = await response.json();
+    return data
+}
+
+function newSetQuestion (elementName,data,qNumber) {
+    console.log(data);
+    let questionContent = data[qNumber];
+    let questionText = document.createTextNode(questionContent);
+    let questionChoices = qNumber + "Choices";
+
+    elementName.appendChild(questionText);
+    
+    for (const a of data[questionChoices]) {
+        let ansButtons = document.createElement("div");
+        elementName.appendChild(ansButtons);
+        ansButtons.setAttribute("id", "answerButtons");
+        ansButtons.textContent = a; 
+    }
+    
+}
+
+function setQuestion (elementName,qNumber,timerCount) {
     //function that populates the question to the screen and answer choices
     // get element that will hold the game form
+    console.log(qNumber);
+
     let questionElement = document.getElementById(elementName);
-    
+    console.log(questionElement);
+    let questionNumber = qNumber;
+    var questionChoices = qNumber + "Choices";
+    console.log(questionChoices);
+
     let getJson = fetch("assets/data.json")
     .then(response => {
        console.log(response);
        return response.json();
     });
-
-    var questionNumber = "q" + number;
-    var questionChoices = "q" + number + "Choices"
    // add question based on questionNumber 
     getJson.then((message) => {
         let questionContent = message[questionNumber];
+        console.log(questionContent);
+        if (questionContent == undefined && timerCount >=0) {
+            gameWon = 0;
+            gameOver();
+            return
+        }
+        else {
+        console.log(questionContent);
         let questionText = document.createTextNode(questionContent);
+        console.log(questionText);
         questionElement.appendChild(questionText);
+
         for (const a of message[questionChoices]) {
             let ansButtons = document.createElement("div");
             questionElement.appendChild(ansButtons);
             ansButtons.setAttribute("id", "answerButtons");
-            ansButtons.textContent = a; // iterate over mapQuestions values 
+            ansButtons.textContent = a; 
         }
-        //setListeners(elementName);
+       }
     })
     .then(function(){
         setListeners(elementName,questionNumber);
     })
 }
 
-function setListeners(gameForm,qNumber) {
-    console.log("running setListeners!");
-    console.log(gameForm);
+function newSetListeners(gameForm,qNumber) {
     let gameFormEl = document.getElementById(gameForm);
     console.log(gameFormEl);
-    console.log(gameFormEl.querySelectorAll('#answerButtons'));
-        gameFormEl.querySelectorAll('#answerButtons').forEach(item => {
-        console.log("logged in forEach" + item);
-        item.addEventListener('click', event => {
-        console.log("You clicked an answer!!!");
-        var answerContent = item.textContent;
-        checkAnswer(answerContent,qNumber);
-        // if answerContent = correctAnswer 
-        console.log(answerContent);
-        //check answer function
-        });
+    gameFormEl.querySelectorAll('#answerButtons').forEach(item => {
+        console.log(item);
     });
 }
 
-function timer(timerElement,isWin,subTime=1) {
+function setListeners(gameForm,qNumber) {
+    //console.log("running setListeners!");
+    console.log(gameForm);
+    //console.log(gameFormEl);
+    //console.log(gameFormEl.querySelectorAll('#answerButtons'));
+    gameForm.querySelectorAll('#answerButtons').forEach(item => {
+    console.log(item);
+    item.addEventListener('click', event => {
+    var answerContent = item.textContent;
+    let ansCorrect = checkAnswer(answerContent,qNumber);
+    ansCorrect.then(function(value){
+        if (value) {
+            console.log("Answer correct returned true!!!!!!");
+            score += 1;
+            currentQuestion += 1;
+            qNumber = "q" + currentQuestion;
+            console.log(qNumber);
+            clearContent(gameFormEl)
+            setQuestion('gameForm',qNumber);
+            console.log(score);
+        }
+        else if (!value){
+            // subtract from timer
+            console.log("wrong answer!");
+        }
+     });
+   });
+ });
+}
+
+function getAnswer(answer) {
+
+}
+
+function startTimer(timerCount) {
+    let timer = setInterval(() => {
+                        timerCount--;
+                        timerElement.textContent = timerCount;
+      console.log(timerCount);
+      if (timerCount === 0) {
+          clearInterval(timer);
+          gameOver();
+      }
+    }, 1000);
+}
+
+function timer(timerElement,timerCount,subTime=1) {
     // function that runs the game timer
     //if answer is wrong subtract from the time
-    var timerCount = 30;
     //let missedQuestion = false;
     
     timer = setInterval(function() {
@@ -78,15 +147,15 @@ function timer(timerElement,isWin,subTime=1) {
         }
         else {
         timerCount--;
+        return timerCount
         }
         // set the content in the html to the timerCount value
         timerElement.textContent = timerCount;
         if (timerCount >= 0) {
           // Tests if win condition is met
-          if (isWin && timerCount > 0) {
+          if (gameWon == 0) {
             // Clears interval and stops timer
             clearInterval(timer);
-            winGame();
           }
         }
         // Tests if time has run out
@@ -96,6 +165,7 @@ function timer(timerElement,isWin,subTime=1) {
           gameOver();
         }
       }, 1000);
+      
     }
 
 
@@ -110,39 +180,32 @@ async function checkAnswer (answerText,qNumber) {
     fetchAnswer = fetchAnswer.trim();
 
     if (fetchAnswer == answerText) {
-        console.log("Correct answer!!");
-        //increment score
-        //clear form
-        //increment qNumber
-        // call setQuestion
+        return true
     }
     else {
-        console.log("Incorrect answer");
-        //subtract from timer
-        // display wrong 
-        // call setQuestion
+        return false
     }
 }
 
 
-function gameOver() {
+function gameOver(elementID) {
     // function that runs when the timer hits zero or after last question answered
     // display form to enter initials and call store initials and score 
     console.log("You lost!");
+    clearContent(elementID);
 }
 
 function storeScore (initials, score) {
     // function that saves initials and score
+    localStorage.setItem(initials, score);
+}
+function getScore (initials, score) {
+    // function that gets initials and score
+    let userScore = localStorage.getItem(initials, score);
+    // guard clause ?
+    return userScore
 }
 
-function storeQuestions () {
-    // run on start store questions and answers in object key:value pair
-    let qa = {
-        "Does this work": 'yes',
-        "What is the fastest land animal": "cheetah",
-        "What is 2 + 2": "4"
-    }
-}
 
 function runGame() {
     // load on start button click
@@ -150,6 +213,6 @@ function runGame() {
 }
 
 
-export {clearContent, timer, setQuestion, setListeners};
+export {clearContent,startTimer, gameOver,timer, setQuestion, setListeners, storeScore,newSetQuestion,newSetListeners,checkAnswer, getQuestions};
 
 
