@@ -6,10 +6,15 @@ var score = 0;
 var timerCount = 30;
 var qNumber = 'q1';
 var isWin = false;
+var isCorrect;
+var defaultInitials = "aaa";
+
 
 function init () {
     let currentQuestion = 1;
     var gameFormEl = document.getElementById('gameForm');
+    var ansStatEl = document.getElementById('answerStatus');
+    //setup timer
     let timer = setInterval(() => {
         timerCount--;
         timerElement.textContent = timerCount;
@@ -30,38 +35,46 @@ function init () {
 
     gameFunc.getQuestions()
     .then(function(response) {
-        console.log(response);
+        // set initial question
         gameFunc.newSetQuestion(gameFormEl,response,qNumber);
+        //return the response data that is the contents of the objects in json file
         return response
     })
     .then(function(response){
+        //add event listener for questions
         gameFormEl.addEventListener('click', event => {
             let qAns = qNumber + "Answer";
             let answer = response[qAns];
             let maxQuestions = response["numberQuestions"];
-            console.log(maxQuestions);
             var answerContent = event.target.textContent;
             //increment question number 
             currentQuestion++
-            //correct answer
+
+            if (currentQuestion > maxQuestions) {
+                isWin = true;
+                //gameFunc.gameOver(gameFormEl);
+                return
+            }
+            //check correct answer
             if (answer === answerContent) {
-                console.log("Answer Correct");
+                gameFunc.displayResult(ansStatEl,!isCorrect)
+                setTimeout(() =>{
+                    gameFunc.clearContent(ansStatEl);
+                }, 1000);
                 gameFunc.clearContent(gameFormEl);
                 //increment current question number
-                score++
-                console.log("Current question number: " + currentQuestion);
-                console.log("Current score: " + score);
+                score++;
+                gameFunc.storeScore(defaultInitials,score);
                 qNumber = "q" + currentQuestion
-                if (currentQuestion > maxQuestions) {
-                    isWin = true;
-                    gameFunc.gameOver(gameFormEl);
-                }
-                else {
-                    gameFunc.newSetQuestion(gameFormEl,response,qNumber);
-                }
+                gameFunc.newSetQuestion(gameFormEl,response,qNumber);
+                gameFunc.getScore(defaultInitials);
             }
             else if (answer !== answerContent) {
                 console.log("wrong answer!")
+                gameFunc.displayResult(ansStatEl,isCorrect)
+                setTimeout(() =>{
+                    gameFunc.clearContent(ansStatEl);
+                }, 1000);
                 if (timerCount > 0) {
                     let subtractAmt = timerCount - 5
                     if (subtractAmt < 0) {
@@ -72,7 +85,15 @@ function init () {
                     }
                 timerElement.textContent = timerCount;
                 }
+                gameFunc.clearContent(gameFormEl);
+                qNumber = "q" + currentQuestion
+                gameFunc.newSetQuestion(gameFormEl,response,qNumber);
             }
+            //var sleep = function (ms) {
+             //   let now = Date.now(), end = now + ms;
+              //  while (now < end) { now = Date.now(); }
+             // };
+            //sleep(2000)
             var myTarget = event.target;
             myTarget.dataset.id = "Correct";
 
