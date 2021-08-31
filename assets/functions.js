@@ -21,17 +21,26 @@ async function getQuestions() {
 }
 
 function newSetQuestion (elementName,data,qNumber) {
-    console.log(data);
     let questionContent = data[qNumber];
-    let questionText = document.createTextNode(questionContent);
+    let questionText = document.createElement('h3');
+    let questionContainer = document.createElement('div');
     let questionChoices = qNumber + "Choices";
+    let separateButtons = document.createElement("br");
+    //questionContainer.setAttribute('id', "questionContainer");
+    questionContainer.setAttribute('class', "d-grid gap-2");
+    questionText.textContent = questionContent;
 
     elementName.appendChild(questionText);
+    elementName.appendChild(questionContainer);
+    //elementName.appendChild(separateButtons);
     
     for (const a of data[questionChoices]) {
-        let ansButtons = document.createElement("div");
-        elementName.appendChild(ansButtons);
-        ansButtons.setAttribute("id", "answerButtons");
+        let questionContainEl = document.getElementById("questionContainer");
+        let ansButtons = document.createElement("p");
+        elementName.appendChild(questionContainer);
+        questionContainer.appendChild(ansButtons);
+        ansButtons.setAttribute("class", "btn btn-primary");
+        //ansButtons.setAttribute("id", "answerButtons");
         ansButtons.textContent = a; 
     }
     
@@ -89,86 +98,6 @@ function newSetListeners(gameForm,qNumber) {
     });
 }
 
-function setListeners(gameForm,qNumber) {
-    //console.log("running setListeners!");
-    console.log(gameForm);
-    //console.log(gameFormEl);
-    //console.log(gameFormEl.querySelectorAll('#answerButtons'));
-    gameForm.querySelectorAll('#answerButtons').forEach(item => {
-    console.log(item);
-    item.addEventListener('click', event => {
-    var answerContent = item.textContent;
-    let ansCorrect = checkAnswer(answerContent,qNumber);
-    ansCorrect.then(function(value){
-        if (value) {
-            console.log("Answer correct returned true!!!!!!");
-            score += 1;
-            currentQuestion += 1;
-            qNumber = "q" + currentQuestion;
-            console.log(qNumber);
-            clearContent(gameFormEl)
-            setQuestion('gameForm',qNumber);
-            console.log(score);
-        }
-        else if (!value){
-            // subtract from timer
-            console.log("wrong answer!");
-        }
-     });
-   });
- });
-}
-
-function getAnswer(answer) {
-
-}
-
-function startTimer(timerCount) {
-    let timer = setInterval(() => {
-                        timerCount--;
-                        timerElement.textContent = timerCount;
-      console.log(timerCount);
-      if (timerCount === 0) {
-          clearInterval(timer);
-          gameOver();
-      }
-    }, 1000);
-}
-
-function timer(timerElement,timerCount,subTime=1) {
-    // function that runs the game timer
-    //if answer is wrong subtract from the time
-    //let missedQuestion = false;
-    
-    timer = setInterval(function() {
-        // if missed a question subtract more time otherwise just decrement by one
-        if (subTime) {
-            timerCount -= subTime;
-        }
-        else {
-        timerCount--;
-        return timerCount
-        }
-        // set the content in the html to the timerCount value
-        timerElement.textContent = timerCount;
-        if (timerCount >= 0) {
-          // Tests if win condition is met
-          if (gameWon == 0) {
-            // Clears interval and stops timer
-            clearInterval(timer);
-          }
-        }
-        // Tests if time has run out
-        if (timerCount === 0) {
-          // Clears interval
-          clearInterval(timer);
-          gameOver();
-        }
-      }, 1000);
-      
-    }
-
-
 async function checkAnswer (answerText,qNumber) {
     // function to check the answer to the question and return right or wrong
     // get item from stored questions/answers then compare to user choice
@@ -187,32 +116,76 @@ async function checkAnswer (answerText,qNumber) {
     }
 }
 
+function displayResult(elementID, isCorrect) {
+    // Function creates html element to display if the answer was correct or wrong to the screen
+    let pText;
+    let questionStatus = document.createElement("p");
+    console.log(isCorrect);
+    if (isCorrect) {
+        pText = "Correct Answer!!";
+    }
+    else {
+        pText = "Wrong Answer!!";
+    }
+    questionStatus.textContent = pText;
+    console.log(questionStatus);
+    elementID.appendChild(questionStatus);
+}
 
 function gameOver(elementID) {
     // function that runs when the timer hits zero or after last question answered
-    // display form to enter initials and call store initials and score 
-    console.log("You lost!");
+    console.log("Game Over !");
     clearContent(elementID);
+    // create end game html elements
+    let endTitle = document.createElement('h3');
+    let initialsForm = document.createElement('div');
+    let formInput = document.createElement('input');
+    let formLabel = document.createElement('span');
+    let scorePageButton = document.createElement('button');
+    endTitle.textContent = "Congrats you have completed the questions !";
+    formLabel.textContent = "Please input your initials";
+    scorePageButton.textContent = "Submit";
+    elementID.appendChild(endTitle);
+    elementID.appendChild(initialsForm);
+    initialsForm.appendChild(formLabel);
+    initialsForm.appendChild(formInput);
+    elementID.appendChild(scorePageButton);
+    scorePageButton.setAttribute("class", "btn btn-primary");
+    initialsForm.setAttribute("class", "input-group mb-3")
+    formLabel.setAttribute("class", "input-group-text");
+    formInput.setAttribute("type", "text");
+    formInput.setAttribute("id", "initialInput");
+    // set listener for submit button
+    scorePageButton.addEventListener('click', function () {
+        var gameFormEl = document.getElementById('gameForm');
+        clearContent(gameFormEl);
+        displayScorePage(gameFormEl);
+    },{once: true}); //the once: true may not work with all browsers 
 }
+
+function displayScorePage(element) {
+    console.log('logged from displayScorePage');
+    let scoreTitle = document.createElement('h1');
+    scoreTitle.textContent = "SCORE";
+    scoreTitle.setAttribute("id", "scoreTitle");
+    element.appendChild(scoreTitle);
+    getScore('aaa');
+}
+
 
 function storeScore (initials, score) {
     // function that saves initials and score
     localStorage.setItem(initials, score);
 }
-function getScore (initials, score) {
+function getScore (initials) {
     // function that gets initials and score
     let userScore = localStorage.getItem(initials, score);
+    console.log(userScore);
     // guard clause ?
     return userScore
 }
 
-
-function runGame() {
-    // load on start button click
-    return true
-}
-
-
-export {clearContent,startTimer, gameOver,timer, setQuestion, setListeners, storeScore,newSetQuestion,newSetListeners,checkAnswer, getQuestions};
+export {clearContent, displayResult, gameOver, setQuestion, 
+    storeScore,getScore,newSetQuestion,newSetListeners,checkAnswer, getQuestions};
 
 
