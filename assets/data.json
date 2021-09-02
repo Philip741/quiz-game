@@ -1,0 +1,35 @@
+{ 
+    "numberQuestions": 4,
+    "q1": "What is javascript",
+    "q1Answer": "A programming language",
+    "q1Choices":[
+        "A version of java",
+        "A programming language",
+        "A restaurant",
+        "A type of dog"
+    ],
+    "q2": "What is an array",
+    "q2Answer": "A datastructure with values",
+    "q2Choices":[
+        "local storage",
+        "My dogs name",
+        "A datastructure with values",
+        "A function to return values"
+    ],
+    "q3": "A ___ can be either true or false",
+    "q3Answer": "Boolean",
+    "q3Choices":[
+        "Boolean",
+        "kind of ghost",
+        "set",
+        "question"
+    ],
+    "q4": "A ___ stores a value",
+    "q4Answer": "Variable",
+    "q4Choices":[
+        "Chest",
+        "Variable",
+        "set",
+        "integer"
+    ]
+}
