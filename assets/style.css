@@ -46,7 +46,7 @@ main {
 
 .scoreChild {
   flex: 1 1 300px;
-  border: 1px solid lightseagreen;
+  border: 1px solid lightgrey;
   background: lightskyblue;
   font-size: 2rem;
   text-align: center;
@@ -54,4 +54,12 @@ main {
 
 .buttonContainer {
     padding:5px;
+}
+#restartButton {
+    padding-right: 5px;
+}
+
+#clearButton {
+    padding-left: 5px;
+    margin-left: 3px;
 }

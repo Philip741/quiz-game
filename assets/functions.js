@@ -39,7 +39,6 @@ function newSetQuestion (elementName,data,qNumber) {
 
 function newSetListeners(gameForm,qNumber) {
     let gameFormEl = document.getElementById(gameForm);
-    console.log(gameFormEl);
     gameFormEl.querySelectorAll('#answerButtons').forEach(item => {
         console.log(item);
     });
@@ -67,7 +66,6 @@ function displayResult(elementID, isCorrect) {
     // Function creates html element to display if the answer was correct or wrong to the screen
     let pText;
     let questionStatus = document.createElement("p");
-    console.log(isCorrect);
     if (isCorrect) {
         pText = "Correct Answer!!";
     }
@@ -91,6 +89,7 @@ function gameOver(elementID, restartMethod) {
     endTitle.textContent = "Congrats you have completed the questions !";
     formLabel.textContent = "Please input your initials";
     scorePageButton.textContent = "Submit";
+    gameForm.setAttribute("class", "card w-50");
     gameForm.setAttribute("id", "gameForm");
     scorePageButton.setAttribute("class", "shadow-sm btn btn-primary");
     initialsForm.setAttribute("class", "input-group mb-3")
@@ -115,26 +114,23 @@ function gameOver(elementID, restartMethod) {
     },{once: true}); //the once: true may not work with all browsers 
 }
 
-function getInitials (inputValue) {
-    console.log(inputValue)
-}
-
 function displayScorePage(element, restartMethod) {
-    
-    console.log('logged from displayScorePage');
     let scoreTitle = document.createElement('h1');
-    let userScore = document.createElement('p');
     let scoreContainer = document.createElement('div');
     let buttonContainer = document.createElement('div');
     let restartButton = document.createElement('button')
+    let clearButton = document.createElement('button')
 
     scoreTitle.textContent = "HIGH SCORES";
     restartButton.textContent = "Restart Quiz"
+    clearButton.textContent = "Clear Score"
     scoreTitle.setAttribute("id", "scoreTitle");
     scoreContainer.setAttribute("class", "scoreParent");
-    buttonContainer.setAttribute("class", "buttonContainer");
+    buttonContainer.setAttribute("class", "d-grid gap-4 d-md-block buttonContainer");
     restartButton.setAttribute('class', 'btn btn-primary');
     restartButton.setAttribute('id', 'restartButton');
+    clearButton.setAttribute("class", "btn btn-primary");
+    clearButton.setAttribute("id", "clearButton");
     element.appendChild(scoreTitle);
     element.appendChild(scoreContainer);
     let allScores = getScore();
@@ -150,7 +146,6 @@ function displayScorePage(element, restartMethod) {
                         scoreKey = '';
                         scoreValue = '';
                     }
-                    console.log(typeof(scoreValue));
                     scoreNameEl.textContent = scoreKey;
                     scoreContainer.appendChild(scoreNameEl);
                     scoreEl.textContent = scoreValue;
@@ -160,9 +155,13 @@ function displayScorePage(element, restartMethod) {
             }
             element.appendChild(buttonContainer);
             buttonContainer.appendChild(restartButton);
+            buttonContainer.appendChild(clearButton);
            restartButton.addEventListener('click', function(){
                location.reload();
            });
+           clearButton.addEventListener('click', function (){
+               localStorage.clear();
+           })
 
             
 
@@ -180,7 +179,6 @@ function storeFinalScore(initials, score) {
 function storeScore (score) {
     // function that saves initials and score
     localStorage.setItem('currentScore', score);
-    console.log(localStorage)
 }
 
 function getScore () {
@@ -191,7 +189,6 @@ function getScore () {
     const scoreValues = Object.values(testData);
     const allScores = [];
     for (let i=0; i<scoreKeys.length; i++) {
-        console.log(scoreKeys[i]);
         var keys = scoreKeys[i];
         var getValues = localStorage.getItem(keys);
         let allUserScore = {[keys]: getValues};
