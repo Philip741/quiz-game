@@ -12,7 +12,7 @@ var currentQuestion = 0;
 
 
 function init () {
-    localStorage.clear();
+    //localStorage.clear();
     var gameFormEl = document.getElementById('gameForm');
     var ansStatEl = document.getElementById('answerStatus');
     //setup timer

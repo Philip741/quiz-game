@@ -104,16 +104,6 @@ function gameOver(elementID) {
     initialsForm.appendChild(formInput);
     gameForm.appendChild(scorePageButton);
 
-    //formInput.addEventListener('focus', function(event) {
-     //   event.preventDefault();
-      //  let text = formInput.value;
-      //  if (text.length > 0 && text.length == 3) {
-      //  let finalScore = localStorage.getItem('currentScore');
-      //  localStorage.clear();
-      //  storeFinalScore(text, finalScore);
-      //  console.log('Your initials are ' + text);
-      //  }
-   // })
     // set listener for submit button
     scorePageButton.addEventListener('click', function () {
         var gameFormEl = document.getElementById('gameForm');
@@ -135,36 +125,44 @@ function displayScorePage(element) {
     let scoreTitle = document.createElement('h1');
     let userScore = document.createElement('p');
     let scoreContainer = document.createElement('div');
+    let buttonContainer = document.createElement('div');
+    let restartButton = document.createElement('button')
 
     scoreTitle.textContent = "HIGH SCORES";
+    restartButton.textContent = "Restart Quiz"
     scoreTitle.setAttribute("id", "scoreTitle");
     scoreContainer.setAttribute("class", "scoreParent");
+    buttonContainer.setAttribute("class", "buttonContainer");
+    restartButton.setAttribute('class', 'btn btn-primary');
+    restartButton.setAttribute('id', 'restartButton');
     element.appendChild(scoreTitle);
     element.appendChild(scoreContainer);
     let allScores = getScore();
             for (const i in allScores) {
-                let scoreName = document.createElement('div');
-                let scoreValue = document.createElement('div');
-                scoreName.setAttribute('class', 'scoreChild');
-                scoreValue.setAttribute('class', 'scoreChild');
-                console.log(i);
+                let scoreNameEl = document.createElement('div');
+                let scoreEl = document.createElement('div');
+                scoreNameEl.setAttribute('class', 'scoreChild');
+                scoreEl.setAttribute('class', 'scoreChild');
                 for (const j in allScores[i]){
                     let scoreKey = j;
+                    let scoreValue = allScores[i][j];
                     if (scoreKey === "currentScore") {
                         scoreKey = '';
+                        scoreValue = '';
                     }
-                    let scoreValue = allScores[i][j];
                     console.log(typeof(scoreValue));
-                    scoreName.textContent = scoreKey;
-                    scoreContainer.appendChild(scoreName);
-                    scoreValue.textContent = scoreValue;
-                    scoreValue.appendChild(scoreValue);
+                    scoreNameEl.textContent = scoreKey;
+                    scoreContainer.appendChild(scoreNameEl);
+                    scoreEl.textContent = scoreValue;
+                    scoreContainer.appendChild(scoreEl);
 
                 }
             }
-    let testing = [...allScores];
-    //console.log(testing);
-    //console.log(allScores)
+            element.appendChild(buttonContainer);
+            buttonContainer.appendChild(restartButton);
+
+            restartButton.addEventListener('click', init);
+
 }
 
 function clearScores () {
