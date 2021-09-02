@@ -18,6 +18,7 @@ currently look for the structure to be the same as the current json file in the 
 
 ### Future feature roadmap
 A future feature to pull from an API is planned.
+
 A theme selector on the first page loaded
 
 ### Deployed Example
@@ -25,7 +26,7 @@ A theme selector on the first page loaded
 <hr>
 
 ### Screenshots
-![Picture of beginning game page](./assets/main-screen.png "Quiz first screen")
+![Picture of beginning game page](./assets/main-page.png "Quiz first screen")
 
 
 
