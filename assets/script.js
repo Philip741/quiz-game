@@ -22,14 +22,14 @@ function init () {
         if (timerCount === 0) {
            clearInterval(timer);
            timerElement.textContent = timerCount;
-           gameFunc.gameOver(mainForm);
+           gameFunc.gameOver(mainForm, init);
            
         }
         else if (timerCount > 0 && isWin) {
            clearInterval(timer)
            timerCount = 0;
            timerElement.textContent = timerCount;
-           gameFunc.gameOver(mainForm);
+           gameFunc.gameOver(mainForm, init);
         }
     }, 1000);
 

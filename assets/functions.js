@@ -78,7 +78,7 @@ function displayResult(elementID, isCorrect) {
     elementID.appendChild(questionStatus);
 }
 
-function gameOver(elementID) {
+function gameOver(elementID, restartMethod) {
     // function that runs when the timer hits zero or after last question answered
     clearContent(elementID);
     // create end game html elements
@@ -111,7 +111,7 @@ function gameOver(elementID) {
         let finalScore = localStorage.getItem('currentScore');
         storeFinalScore(inputVal, finalScore);
         clearContent(gameFormEl);
-        displayScorePage(gameFormEl);
+        displayScorePage(gameFormEl,restartMethod);
     },{once: true}); //the once: true may not work with all browsers 
 }
 
@@ -119,7 +119,7 @@ function getInitials (inputValue) {
     console.log(inputValue)
 }
 
-function displayScorePage(element) {
+function displayScorePage(element, restartMethod) {
     
     console.log('logged from displayScorePage');
     let scoreTitle = document.createElement('h1');
@@ -160,8 +160,11 @@ function displayScorePage(element) {
             }
             element.appendChild(buttonContainer);
             buttonContainer.appendChild(restartButton);
+           restartButton.addEventListener('click', function(){
+               location.reload();
+           });
 
-            restartButton.addEventListener('click', init);
+            
 
 }
 
